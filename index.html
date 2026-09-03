@@ -2,89 +2,220 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>¡Feliz Cumpleaños!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Misión Cumpleaños 🎂</title>
     <style>
-        body { display: flex; flex-direction: column; align-items: center; background-color: #ffe6f2; font-family: sans-serif; margin: 0; padding: 20px; touch-action: none; }
-        canvas { background-color: #fff; border: 3px solid #ff99cc; border-radius: 12px; margin-top: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        h1 { color: #cc0066; text-align: center; }
-        #mensaje { display: none; margin-top: 30px; font-size: 24px; color: #cc0066; font-weight: bold; text-align: center; background: white; padding: 20px; border-radius: 10px; border: 2px dashed #ff99cc; }
+        body {
+            background-color: #ffe6f0;
+            color: #4a1525;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .container {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(255, 105, 180, 0.3);
+            max-width: 400px;
+            width: 100%;
+            border: 3px solid #ffb6c1;
+        }
+        h2 { color: #d81b60; margin-bottom: 5px; font-size: 22px; }
+        .subtitle { font-size: 13px; color: #880e4f; margin-bottom: 15px; font-weight: bold; }
+        
+        /* Cuadrícula ampliada a 7x7 para más entretenimiento */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            margin: 15px auto;
+            justify-content: center;
+            background: #ffb6c1;
+            padding: 6px;
+            border-radius: 12px;
+            width: fit-content;
+        }
+        .cell {
+            width: 38px;
+            height: 38px;
+            background: #fff0f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            border-radius: 6px;
+        }
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 15px;
+            max-width: 220px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        button {
+            background-color: #ff4081;
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(255, 64, 129, 0.4);
+        }
+        button:active { background-color: #c51162; transform: scale(0.95); }
+        .hidden { display: none; }
+        .card {
+            background: #fff0f5;
+            padding: 18px;
+            border-radius: 12px;
+            border: 2px dashed #ff4081;
+            animation: fadeIn 0.8s ease-in-out;
+            text-align: left;
+        }
+        .card h3 { color: #d81b60; text-align: center; margin-top: 0; }
+        .card p { font-size: 13px; line-height: 1.6; color: #4a1525; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
-    <h1 id="titulo">Ayuda al personaje a encontrar la sorpresa</h1>
-    <canvas id="gameCanvas" width="300" height="300"></canvas>
-    <div id="mensaje">¡Feliz Cumpleaños! 🌸🎁<br>Eres una amiga increíble, espero que disfrutes tu día.</div>
+    <div class="container" id="game-container">
+        <h2>✨ Misión Cumpleaños ✨</h2>
+        <div class="subtitle">🎯 MISIÓN DESBLOQUEADA: Cumplir años</div>
+        <p style="font-size: 12px; color: #666; margin: 0 0 10px 0;">Guía al corredor 🏃‍♂️ hasta el regalo 🎁 esquivando las paredes 🧱 y al enemigo 👾.</p>
+        
+        <div class="grid" id="maze-grid"></div>
+
+        <div class="controls">
+            <div></div>
+            <button onclick="mover(-1, 0)">⬆️</button>
+            <div></div>
+            <button onclick="mover(0, -1)">⬅️</button>
+            <button onclick="mover(1, 0)">⬇️</button>
+            <button onclick="mover(0, 1)">➡️</button>
+        </div>
+    </div>
+
+    <div class="container hidden" id="victory-container">
+        <h2 style="color: #d81b60;">🎉 ¡MISIÓN CUMPLIDA! 🎉</h2>
+        <div style="font-size: 40px; margin: 5px 0;">🎂🎁✨</div>
+        <div class="card">
+            <h3>¡Feliz Cumpleaños!</h3>
+            <p>
+                Llegaste al final… aunque técnicamente esto recién empieza. Gracias por todos los momentos, las risas, las locuras y las historias que compartimos en el día a día. 
+                <br><br>
+                De parte de todo el grupo, te deseamos un feliz cumpleaños enorme. Eres una persona increíble y te mereces lo mejor del mundo. ¡Ahora andá a disfrutar tu nuevo nivel con toda la energía y a celebrar a lo grande! 💖🥂🎈
+            </p>
+        </div>
+        <button onclick="reiniciar()" style="margin-top: 15px; width: 100%;">🔄 Jugar de nuevo</button>
+    </div>
 
     <script>
-        // Mapa: 1 = camino, 0 = pared, 2 = inicio, 3 = meta
-        const maze = [
-            [2, 1, 0, 0, 0, 0],
-            [0, 1, 1, 1, 0, 0],
-            [0, 0, 0, 1, 0, 0],
-            [0, 1, 1, 1, 1, 0],
-            [0, 1, 0, 0, 1, 1],
-            [0, 1, 1, 0, 0, 3]
+        // Mapa ampliado de 7x7 (0: Camino, W: Muro, E: Enemigo móvil, M: Meta)
+        const mapaOriginal = [
+            ['0', 'W', '0', '0', '0', 'W', '0'],
+            ['0', 'W', '0', 'W', '0', 'W', '0'],
+            ['0', '0', '0', 'W', '0', '0', '0'],
+            ['W', 'W', '0', 'W', 'W', 'W', '0'],
+            ['0', '0', '0', '0', '0', 'W', '0'],
+            ['0', 'W', 'W', 'W', '0', 'W', '0'],
+            ['0', '0', '0', '0', '0', '0', 'M']
         ];
-        const tileSize = 50;
-        let player = { x: 0, y: 0 };
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
+        
+        let py = 0, px = 0;
+        let ey = 3, ex = 2; // Posición del enemigo
 
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            for (let y = 0; y < maze.length; y++) {
-                for (let x = 0; x < maze[y].length; x++) {
-                    if (maze[y][x] === 0) {
-                        ctx.fillStyle = '#ffb3d9';
-                        ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
-                    } else if (maze[y][x] === 3) {
-                        ctx.font = '30px Arial';
-                        ctx.fillText('🎁', x * tileSize + 8, y * tileSize + 35);
+        function render() {
+            const grid = document.getElementById('maze-grid');
+            grid.innerHTML = '';
+            for(let r=0; r<7; r++) {
+                for(let c=0; c<7; c++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    if(r === py && c === px) {
+                        cell.innerHTML = '🏃‍♂️';
+                    } else if(r === ey && c === ex) {
+                        cell.innerHTML = '👾';
+                    } else if(mapaOriginal[r][c] === 'W') {
+                        cell.innerHTML = '🧱';
+                    } else if(mapaOriginal[r][c] === 'M') {
+                        cell.innerHTML = '🎁';
+                    } else {
+                        cell.innerHTML = '⬜';
+                    }
+                    grid.appendChild(cell);
+                }
+            }
+        }
+
+        function moverEnemigo() {
+            // Movimiento aleatorio simple del enemigo
+            const movimientos = [[-1,0], [1,0], [0,-1], [0,1]];
+            const m = movimientos[Math.floor(Math.random() * movimientos.length)];
+            let ny = ey + m[0];
+            let nx = ex + m[1];
+            if(ny >= 0 && ny < 7 && nx >= 0 && nx < 7 && mapaOriginal[ny][nx] !== 'W') {
+                ey = ny;
+                ex = nx;
+            }
+        }
+
+        function mover(dy, dx) {
+            let ny = py + dy;
+            let nx = px + dx;
+            if(ny >= 0 && ny < 7 && nx >= 0 && nx < 7) {
+                if(mapaOriginal[ny][nx] !== 'W') {
+                    py = ny;
+                    px = nx;
+                    
+                    // Comprobar si chocó con el enemigo
+                    if(py === ey && px === ex) {
+                        alert("⚠️ ¡Te atrapó el enemigo! Volviendo al inicio...");
+                        reiniciar();
+                        return;
+                    }
+
+                    // Mover enemigo en cada turno del jugador
+                    moverEnemigo();
+
+                    // Comprobar si chocó tras el movimiento del enemigo
+                    if(py === ey && px === ex) {
+                        alert("⚠️ ¡El enemigo se te cruzó! Volviendo al inicio...");
+                        reiniciar();
+                        return;
+                    }
+
+                    if(mapaOriginal[py][px] === 'M') {
+                        document.getElementById('game-container').classList.add('hidden');
+                        document.getElementById('victory-container').classList.remove('hidden');
+                    } else {
+                        render();
                     }
                 }
             }
-            ctx.font = '30px Arial';
-            ctx.fillText('🏃', player.x * tileSize + 8, player.y * tileSize + 35);
         }
 
-        function move(dx, dy) {
-            let newX = player.x + dx;
-            let newY = player.y + dy;
-            if (newX >= 0 && newX < 6 && newY >= 0 && newY < 6 && maze[newY][newX] !== 0) {
-                player.x = newX;
-                player.y = newY;
-                draw();
-                if (maze[player.y][player.x] === 3) {
-                    document.getElementById('mensaje').style.display = 'block';
-                    canvas.style.display = 'none';
-                    document.getElementById('titulo').style.display = 'none';
-                }
-            }
+        function reiniciar() {
+            py = 0; px = 0;
+            ey = 3; ex = 2;
+            document.getElementById('victory-container').classList.add('hidden');
+            document.getElementById('game-container').classList.remove('hidden');
+            render();
         }
 
-        // Controles táctiles (deslizar el dedo)
-        let touchStartX = 0;
-        let touchStartY = 0;
-        canvas.addEventListener('touchstart', e => {
-            touchStartX = e.changedTouches[0].screenX;
-            touchStartY = e.changedTouches[0].screenY;
-            e.preventDefault();
-        }, {passive: false});
-
-        canvas.addEventListener('touchend', e => {
-            let dx = e.changedTouches[0].screenX - touchStartX;
-            let dy = e.changedTouches[0].screenY - touchStartY;
-            if (Math.abs(dx) > Math.abs(dy)) {
-                if (dx > 30) move(1, 0); // Derecha
-                else if (dx < -30) move(-1, 0); // Izquierda
-            } else {
-                if (dy > 30) move(0, 1); // Abajo
-                else if (dy < -30) move(0, -1); // Arriba
-            }
-        });
-
-        draw();
+        render();
     </script>
 </body>
 </html>
