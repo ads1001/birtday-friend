@@ -1,3 +1,5 @@
+import os
+os.environ["SDL_VIDEODRIVER"] = "dummy"  # Simula una pantalla para la nube
 import pygame
 import random
 import sys
