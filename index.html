@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>¡Feliz Cumpleaños!</title>
+    <style>
+        body { display: flex; flex-direction: column; align-items: center; background-color: #ffe6f2; font-family: sans-serif; margin: 0; padding: 20px; touch-action: none; }
+        canvas { background-color: #fff; border: 3px solid #ff99cc; border-radius: 12px; margin-top: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        h1 { color: #cc0066; text-align: center; }
+        #mensaje { display: none; margin-top: 30px; font-size: 24px; color: #cc0066; font-weight: bold; text-align: center; background: white; padding: 20px; border-radius: 10px; border: 2px dashed #ff99cc; }
+    </style>
+</head>
+<body>
+    <h1 id="titulo">Ayuda al personaje a encontrar la sorpresa</h1>
+    <canvas id="gameCanvas" width="300" height="300"></canvas>
+    <div id="mensaje">¡Feliz Cumpleaños! 🌸🎁<br>Eres una amiga increíble, espero que disfrutes tu día.</div>
+
+    <script>
+        // Mapa: 1 = camino, 0 = pared, 2 = inicio, 3 = meta
+        const maze = [
+            [2, 1, 0, 0, 0, 0],
+            [0, 1, 1, 1, 0, 0],
+            [0, 0, 0, 1, 0, 0],
+            [0, 1, 1, 1, 1, 0],
+            [0, 1, 0, 0, 1, 1],
+            [0, 1, 1, 0, 0, 3]
+        ];
+        const tileSize = 50;
+        let player = { x: 0, y: 0 };
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let y = 0; y < maze.length; y++) {
+                for (let x = 0; x < maze[y].length; x++) {
+                    if (maze[y][x] === 0) {
+                        ctx.fillStyle = '#ffb3d9';
+                        ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
+                    } else if (maze[y][x] === 3) {
+                        ctx.font = '30px Arial';
+                        ctx.fillText('🎁', x * tileSize + 8, y * tileSize + 35);
+                    }
+                }
+            }
+            ctx.font = '30px Arial';
+            ctx.fillText('🏃', player.x * tileSize + 8, player.y * tileSize + 35);
+        }
+
+        function move(dx, dy) {
+            let newX = player.x + dx;
+            let newY = player.y + dy;
+            if (newX >= 0 && newX < 6 && newY >= 0 && newY < 6 && maze[newY][newX] !== 0) {
+                player.x = newX;
+                player.y = newY;
+                draw();
+                if (maze[player.y][player.x] === 3) {
+                    document.getElementById('mensaje').style.display = 'block';
+                    canvas.style.display = 'none';
+                    document.getElementById('titulo').style.display = 'none';
+                }
+            }
+        }
+
+        // Controles táctiles (deslizar el dedo)
+        let touchStartX = 0;
+        let touchStartY = 0;
+        canvas.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+            e.preventDefault();
+        }, {passive: false});
+
+        canvas.addEventListener('touchend', e => {
+            let dx = e.changedTouches[0].screenX - touchStartX;
+            let dy = e.changedTouches[0].screenY - touchStartY;
+            if (Math.abs(dx) > Math.abs(dy)) {
+                if (dx > 30) move(1, 0); // Derecha
+                else if (dx < -30) move(-1, 0); // Izquierda
+            } else {
+                if (dy > 30) move(0, 1); // Abajo
+                else if (dy < -30) move(0, -1); // Arriba
+            }
+        });
+
+        draw();
+    </script>
+</body>
+</html>
